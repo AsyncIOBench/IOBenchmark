@@ -11,25 +11,24 @@ data = {
 
 df = pd.DataFrame(data)
 
-fig, axs = plt.subplots(3, 1, figsize=(10, 12))
+fig, axs = plt.subplots(3, 1, figsize=(10, 14))
 
-axs[0].bar(df["Engine"] + " - " + df["Test Type"], df["IOPS"], color="lightblue")
-axs[0].set_title("IOPS Comparison")
-axs[0].set_ylabel("IOPS (Ops/sec)")
-axs[0].tick_params(axis='x', rotation=45)
+def plot_bar(ax, y_values, title, ylabel, color):
+    bars = ax.bar(df["Engine"] + " - " + df["Test Type"], y_values, color=color)
+    ax.set_title(title, fontsize=12, pad=10)
+    ax.set_ylabel(ylabel, fontsize=10)
+    ax.set_xticklabels(df["Engine"] + " - " + df["Test Type"], rotation=20, ha="right", fontsize=9)
+    for bar in bars:
+        height = bar.get_height()
+        ax.annotate(f"{height:.2f}", xy=(bar.get_x() + bar.get_width() / 2, height),
+                    xytext=(0, 3), textcoords="offset points",
+                    ha="center", fontsize=8, color="black")
 
-axs[1].bar(df["Engine"] + " - " + df["Test Type"], df["Latency (µs)"], color="orange")
-axs[1].set_title("Latency Comparison")
-axs[1].set_ylabel("Latency (µs)")
-axs[1].tick_params(axis='x', rotation=45)
+plt.subplots_adjust(hspace=0.3)
 
-axs[2].bar(df["Engine"] + " - " + df["Test Type"], df["Bandwidth (MiB/s)"], color="green")
-axs[2].set_title("Bandwidth Comparison")
-axs[2].set_ylabel("Bandwidth (MiB/s)")
-axs[2].tick_params(axis='x', rotation=45)
+plot_bar(axs[0], df["IOPS"], "IOPS Comparison", "IOPS", "lightblue")
+plot_bar(axs[1], df["Latency (µs)"], "Latency Comparison", "Latency (µs)", "orange")
+plot_bar(axs[2], df["Bandwidth (MiB/s)"], "Bandwidth Comparison", "Bandwidth (MiB/s)", "green")
 
-plt.tight_layout()
-plt.savefig("Figure.png", dpi=300)
+plt.savefig("Figure.png", dpi=300, bbox_inches="tight")
 plt.show()
-
-print(df)
