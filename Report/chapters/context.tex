@@ -15,36 +15,176 @@
 % ‫پایان‌نامه، حروف‌چینی، قالب، زی‌پرشین
 % ‫%\صفحه‌جدید
 ‫
-‫\usepackage{xepersian}
+% ‫\usepackage{xepersian}
 ‫\settextfont{XB Niloofar} % You can replace this with any Persian font you use
 ‫\setlatintextfont{Times New Roman} % Set an appropriate English font
 ‫
-‫
 ‫\section{مقدمه}
+‫سیستم‌های ذخیره‌سازی داده‌ها به عنوان یکی از بخش‌های حیاتی عملکرد کلی سیستم‌های رایانه‌ای محسوب می‌شوند. بهبود بهره‌وری این سیستم‌ها در سرعت خواندن و نوشتن اطلاعات از اهمیت ویژه‌ای برخوردار است. در این پروژه، ابزار \lr{NVMeVirt} مورد بررسی قرار گرفته و عملکرد آن از طریق ابزارهای \lr{FIO} و \lr{SPDK} سنجیده شده است.
 ‫
+‫\section*{مطالعه روش‌های مختلف دسترسی به ذخیره‌سازی}
+‫در سیستم‌عامل‌های مدرن، چندین روش برای دسترسی به دیسک‌های ذخیره‌سازی وجود دارد که هرکدام ویژگی‌های خاص خود را دارند:
 ‫
+‫\subsection*{فراخوان‌های سیستمی \lr{POSIX I/O}}
+‫این روش کلاسیک، از فراخوان‌های سیستمی مانند \lr{read()} و \lr{write()} استفاده می‌کند که موجب ایجاد سربار فراخوانی سیستم و مدیریت صف‌های ورودی/خروجی در کرنل می‌شود.
 ‫
-‫‫\section{شبیه ساز NVMeVirt }
-‫‫\subsection*{توضیحات}
+‫\subsection*{\lr{libaio}}
+‫کتابخانه \lr{libaio} به منظور اجرای عملیات \lr{I/O} به صورت همزمان طراحی شده و باعث کاهش تأخیر ناشی از انتظار در صف‌های پردازشی کرنل می‌شود. این کتابخانه امکان مدیریت درخواست‌های ورودی/خروجی را از طریق مکانیزم \lr{event-driven} فراهم می‌کند.
 ‫
-‫نحوه تعریف PCIeRoot
+‫\subsection*{\lr{io_uring}}
+‫\lr{io_uring} یکی از جدیدترین فناوری‌های بهینه‌سازی دسترسی به دیسک در سیستم‌عامل لینوکس است که با بهره‌گیری از صف‌های حلقوی \lr{ring buffer}، تعاملات ورودی/خروجی را با کمترین سربار پردازشی انجام می‌دهد.
 ‫
-‫مطالعه کد های مربوطه و تهیه مستند
+‫\subsection*{\lr{SPDK}}
+‫\lr{Storage Performance Development Kit (SPDK)} یک مجموعه ابزار توسعه است که به منظور حذف سربار فراخوان‌های سیستمی طراحی شده و امکان برقراری ارتباط مستقیم با سخت‌افزار ذخیره‌سازی را بدون دخالت کرنل فراهم می‌کند.
 ‫
-‫نحوه کارکرد شبیه ساز
+‫\section{شبیه‌ساز \lr{NVMeVirt}}
 ‫
-‫معماری آن و بخش های اساسی معماری
+‫\subsection*{توضیحات}
+‫شبیه‌ساز \lr{NVMeVirt} یک ماژول کرنل است که یک دستگاه ذخیره‌سازی مجازی را شبیه‌سازی کرده و به عنوان یک دستگاه \lr{NVMe} برای سیستم ظاهر می‌شود. این شبیه‌ساز در سطح \lr{PCIe} پیاده‌سازی شده و امکان ارزیابی عملکرد و توسعه روش‌های بهینه‌سازی سیستم‌های ذخیره‌سازی را فراهم می‌کند.
 ‫
-‫سطح شبیه سازی (آیا شبیه سازی بر بستر دیسک فعلیست یا هم سطح آن یا لایه های پایینتر؟ آیا در سطح پیاده سازی شده امکان استفاده برنامه کاربر یا کرنل از آن وجود دارد؟...)
+‫\subsubsection*{نحوه تعریف \lr{PCIeRoot}}
+‫شبیه‌ساز \lr{NVMeVirt} در لایه \lr{PCIe} عمل می‌کند و برای تعریف آن، از مدل‌های \lr{PCIeRoot} موجود در کرنل لینوکس استفاده می‌شود. این شبیه‌سازی در لایه \lr{bus} انجام شده و به‌عنوان یک دستگاه مجازی به سیستم‌عامل معرفی می‌شود.
 ‫
-‫مکان ذخیره سازی داده های این شبیه ساز
+‫\subsubsection*{مطالعه کدهای مربوطه و تهیه مستندات}
+‫کد منبع \lr{NVMeVirt} شامل چندین فایل کلیدی است که نحوه ارتباط آن با سیستم را مشخص می‌کنند:
+‫\begin{itemize}
+‫	\item \texttt{pci.c}: مدیریت ارتباط \lr{PCIe} و پیاده‌سازی شبیه‌سازی دستگاه \lr{NVMe}.
+‫	\item \texttt{nvmev.h}: شامل تعاریف کلی و پارامترهای کنترلی ماژول.
+‫	\item \texttt{main.c}: شامل بخش اصلی پیاده‌سازی پردازش ورودی/خروجی و مدیریت حافظه.
+‫\end{itemize}
 ‫
-‫نحوه کنترل سرعت دسترسی دیسک مجازی و شبیه سازی دیسک سرعت بالا روی لپ تاپ با دیسک سرعت پایین
+‫\subsubsection*{نحوه کارکرد شبیه‌ساز}
+‫شبیه‌ساز \lr{NVMeVirt} یک ماژول کرنل است که از مکانیزم‌های مدیریت حافظه برای اختصاص فضای فیزیکی به عنوان فضای ذخیره‌سازی شبیه‌سازی شده استفاده می‌کند. این ماژول درخواست‌های ورودی/خروجی را پردازش کرده و آن‌ها را در حافظه اصلی نگهداری می‌کند.
+‫
+‫\subsubsection*{معماری و بخش‌های اساسی}
+‫معماری \lr{NVMeVirt} از بخش‌های زیر تشکیل شده است:
+‫\begin{itemize}
+‫	\item \textbf{مدیریت حافظه}: اختصاص و مدیریت فضای حافظه برای شبیه‌سازی دستگاه ذخیره‌سازی.
+‫	\item \textbf{مدیریت \lr{PCIe}}: ارتباط با زیرسیستم \lr{PCIe} و شبیه‌سازی دستورات \lr{NVMe}.
+‫	\item \textbf{مدیریت صف‌های ورودی/خروجی}: پردازش درخواست‌های \lr{I/O} و اجرای آن‌ها به صورت شبیه‌سازی شده.
+‫\end{itemize}
+‫
+‫\subsubsection*{سطح شبیه‌سازی}
+‫شبیه‌ساز \lr{NVMeVirt} در سطح \lr{PCIe} عمل می‌کند و به‌عنوان یک دیسک مجازی \lr{NVMe} در سیستم شناخته می‌شود. این شبیه‌ساز از حافظه فیزیکی سیستم برای ذخیره داده‌ها استفاده کرده و امکان تعامل مستقیم برنامه‌های کاربر و کرنل را فراهم می‌کند.
+‫
+‫\subsubsection*{مکان ذخیره‌سازی داده‌ها}
+‫داده‌های ذخیره‌شده توسط \lr{NVMeVirt} در حافظه اصلی قرار می‌گیرند و از طریق پارامترهای \texttt{memmap\_start} و \texttt{memmap\_size} قابل تنظیم هستند. این روش باعث افزایش سرعت دسترسی به داده‌ها می‌شود اما ممکن است میزان حافظه موجود در سیستم را کاهش دهد.
+‫
+‫\subsubsection*{کنترل سرعت دسترسی و شبیه‌سازی دیسک سرعت بالا}
+‫برای شبیه‌سازی یک دستگاه ذخیره‌سازی پرسرعت بر روی سیستمی با دیسک کندتر، می‌توان از تنظیمات نرخ ورودی/خروجی استفاده کرد. این امر با تغییر اندازه \lr{queue depth} و استفاده از برنامه‌های آزمون مانند \lr{FIO} امکان‌پذیر است.
 ‫
 ‫‫\subsection*{مراحل نصب و شبیه سازی}
-‫مراحل نصب و ایجاد دیسک مجازی
 ‫
-‫صحت کارکرد
+‫\begin{figure}[H]
+‫	‫    \centering
+‫	‫    \includegraphics[width=\textwidth]{figs/11.jpg}
+‫	‫    \caption{GRUB}
+‫\end{figure}
+‫
+‫‫\begin{figure}[H]
+‫	‫	‫    \centering
+‫	‫	‫    \includegraphics[width=\textwidth]{figs/12.jpg}
+‫	‫	‫    \caption{آپدیت GRUB و در ادامه، ریبوت}
+‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫    \centering
+‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/13.jpg}
+‫			\caption{بررسی تغییرات انجام شده}
+‫\end{figure}
+‫
+‫\begin{figure}[H]
+‫	‫    \centering
+‫	‫    \includegraphics[width=\textwidth]{figs/14.jpg}
+‫	‫    \caption{بارگذاری ماژول}
+‫\end{figure}
+‫
+‫\begin{figure}[H]
+‫	‫    \centering
+‫	‫    \includegraphics[width=\textwidth]{figs/15.jpg}
+‫	‫    \caption{بررسی تنظیمات memmap در کرنل}
+‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫    \centering
+‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/16.jpg}
+‫			\caption{بررسی دقیق شناسایی درست دیسک مجازی}
+‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫    \centering
+‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/17.jpg}
+‫			\caption{نصب fio}
+‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫    \centering
+‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/18.jpg}
+‫			\caption{اسکریپت تحلیل libaio}
+‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫    \centering
+‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/19.jpg}
+‫			\caption{نتیجه‌ی ران اسکریپت تحلیل libaio}
+‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫    \centering
+‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/20.jpg}
+‫			\caption{کلون گرفتن از ریپوی liburing}
+‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫    \centering
+‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/21.jpg}
+‫			\caption{کانفیگ liburing}
+‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫    \centering
+‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/22.jpg}
+‫			\caption{ادامه‌ی کانفیگ liburing}
+‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫	‫    \centering
+‫	‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/23.jpg}
+‫	‫			\caption{کامپایل و نصب liburing}
+‫‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫	‫    \centering
+‫	‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/24.jpg}
+‫	‫			\caption{ادامه‌ی کامپایل و نصب liburing}
+‫‫\end{figure}
+‫
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫	‫	‫    \centering
+‫	‫	‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/25.jpg}
+‫	‫	‫			\caption{کامپایل و نصب liburing.pc}
+‫‫\end{figure}
+‫
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫	‫	‫    \centering
+‫	‫	‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/26.jpg}
+‫	‫	‫			\caption{کامپایل و نصب liburing}
+‫‫\end{figure}
+‫
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫	‫    \centering
+‫	‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/27.jpg}
+‫	‫			\caption{اسکریپت تحلیل liburing}
+‫	‫\end{figure}
+‫
+‫‫‫\begin{figure}[H]
+‫	‫	‫	‫	‫    \centering
+‫	‫	‫	‫	‫    \includegraphics[width=\textwidth]{figs/28.jpg}
+‫	‫			\caption{نتیجه‌ی ران اسکریپت تحلیل liburing}
+‫	‫\end{figure}
 ‫
 ‫‫\subsection*{بررسی عملکرد مولفه ها توسط FIO}
 ‫
