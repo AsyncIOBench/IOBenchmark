@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 data = {
     "Engine": ["libaio", "libaio", "io_uring", "io_uring", "SPDK", "SPDK"],
     "Test Type": ["Rand Read", "Rand Write", "Rand Read", "Rand Write", "Rand Read", "Rand Write"],
-    "IOPS": [2583, 1839, 1016, 1866, 258000, 517000],
+    "IOPS": [2583, 1866, 1016, 1866, 258000, 517000],
     "Latency (µs)": [378.95, 523.40, 970.34, 521.96, 1.64, 1.61],
     "Bandwidth (MiB/s)": [10.1, 7.3, 4.1, 7.5, 1007, 2018]
 }
@@ -30,5 +30,5 @@ plot_bar(axs[0], df["IOPS"], "IOPS Comparison", "IOPS", "lightblue")
 plot_bar(axs[1], df["Latency (µs)"], "Latency Comparison", "Latency (µs)", "orange")
 plot_bar(axs[2], df["Bandwidth (MiB/s)"], "Bandwidth Comparison", "Bandwidth (MiB/s)", "green")
 
-plt.savefig("Figure.png", dpi=300, bbox_inches="tight")
+plt.savefig("Overview.png", dpi=300, bbox_inches="tight")
 plt.show()
