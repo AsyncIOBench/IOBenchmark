@@ -1,0 +1,19 @@
+[global]
+ioengine=spdk
+thread=1
+rw=randrw
+filename=trtype=PCIe traddr=0001.10.00.0 ns=1
+blocksize=4kb
+size=4G
+time_based=1
+ramp_time=0
+runtime=10
+refill_buffers=1
+norandommap=1
+group_reporting=1
+direct=1
+verify=0
+
+
+[test]
+numjobs=1
