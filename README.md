@@ -1,10 +1,8 @@
-# IOBenchmark
-
-# NVMe Storage Benchmarking
+# IOBenchmark, NVMe Storage Benchmarking
 
 This repository contains scripts and tools for benchmarking NVMe storage using different I/O engines, including `libaio`, `io_uring`, and `SPDK`. It also includes performance analysis and results obtained from running these tests.
 
-## 📂 Repository Structure
+## Repository Structure
 - **`Experiments`** - Contains Shell scripts for running benchmarks with different I/O engines, Output files and performance analysis from the benchmarking tests, Installation and testing scripts for SPDK, and Scripts for evaluating RocksDB performance on NVMe storage.
 - **`Report/`** - LaTeX source files of the performance analysis report, including detailed results, figures, and discussions.
 
@@ -38,4 +36,9 @@ cat Experiments/libaio/randwrite_1.txt
 The repository includes:
 - **Latency, IOPS, and Bandwidth comparisons** for `libaio` and `io_uring`.
 - **NVMe storage behavior under high load**.
-- **SPDK and RocksDB performance testing**.
+- **SPDK performance evaluation and optimization techniques**.
+- **RocksDB benchmarking on NVMe storage**: 
+  - Evaluates how different I/O engines affect database performance.
+  - Analyzes read/write throughput, latency, and tail latency under various workloads.
+  - Explores the impact of NVMe storage on key-value database operations.
+  - Compares sequential and random read/write performance.
