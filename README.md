@@ -43,6 +43,18 @@ The repository includes:
   - Explores the impact of NVMe storage on key-value database operations.
   - Compares sequential and random read/write performance.
 
+## Performance Comparison
+
+Below is the comparison of various performance metrics (Latency, IOPS, and Bandwidth) across different I/O engines (libaio, io_uring, SPDK, and RocksDB).
+
+| ![Latency Comparison](latency_comparison.png) | ![IOPS Comparison](iops_comparison.png) |
+|-----------------------------------------------------|------------------------------------------------|
+| **Latency Comparison**                              | **IOPS Comparison**                           |
+
+| ![Bandwidth Comparison](bandwidth_comparison.png) | ![Overview](Overview.png) |
+|---------------------------------------------------------|------------------------------------------------------|
+| **Bandwidth Comparison**                               | **Overview**                              |
+
 ## Team
 - [Iman Mohammadi](https://github.com/Imanm02)
 - [Kiarash Joolaei](https://github.com/KiaJJ)
