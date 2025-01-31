@@ -4,7 +4,7 @@ This repository contains scripts and tools for benchmarking NVMe storage using d
 
 ## Repository Structure
 - **`Experiments`** - Contains Shell scripts for running benchmarks with different I/O engines, Output files and performance analysis from the benchmarking tests, Installation and testing scripts for SPDK, and Scripts for evaluating RocksDB performance on NVMe storage.
-- **`Report/`** - LaTeX source files of the performance analysis report, including detailed results, figures, and discussions.
+- **`Report`** - LaTeX source files of the performance analysis report, including detailed results, figures, and discussions.
 
 ## Setup and Usage
 
