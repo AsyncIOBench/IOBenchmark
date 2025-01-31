@@ -42,3 +42,8 @@ The repository includes:
   - Analyzes read/write throughput, latency, and tail latency under various workloads.
   - Explores the impact of NVMe storage on key-value database operations.
   - Compares sequential and random read/write performance.
+
+## Team
+- [Iman Mohammadi](https://github.com/Imanm02)
+- [Kiarash Joolaei](https://github.com/KiaJJ)
+- [Sobhan Asadi](https://github.com/SobhanAsadi)
