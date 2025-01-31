@@ -45,7 +45,7 @@ The repository includes:
 
 ## Performance Comparison
 
-Below is the comparison of various performance metrics (Latency, IOPS, and Bandwidth) across different I/O engines (libaio, io_uring, SPDK, and RocksDB).
+Below is the comparison of various performance metrics (Latency, IOPS, and Bandwidth) across different I/O engines (libaio, io_uring, and SPDK).
 
 | ![Latency Comparison](latency_comparison.png) | ![IOPS Comparison](iops_comparison.png) |
 |-----------------------------------------------------|------------------------------------------------|
